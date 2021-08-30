@@ -13,11 +13,10 @@ widgets:
 
 # social config
 social:
-  zhihu:
-  twitter: /
-  facebook: /
-  linkedin:
-  instagram: /
+  zhihu: people/rickycs97
+  facebook: rickycs97
+  linkedin: rickyds97
+  instagram: rickyds97
   github: rickywesker
 
 user:
@@ -31,7 +30,7 @@ user:
 # API config: https://utteranc.es/
 comment_utteranc:
   enable: true
-  repo: Haojen/Claudia-theme-blog # your blog repo
+  repo: rickywesker/hexo_netlify_rick # your blog repo
 
 
 # documents: https://valine.js.org/quickstart.html
