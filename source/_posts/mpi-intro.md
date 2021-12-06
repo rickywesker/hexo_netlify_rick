@@ -1,5 +1,5 @@
 ---
-title: 利用MPI实现All-Reduce
+title: 利用MPI实现Inplace All-Reduce
 date: 2021-12-07 04:15:40
 tags:
   - 编程
