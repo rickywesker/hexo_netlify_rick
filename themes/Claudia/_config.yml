@@ -47,14 +47,14 @@ comment_disqus:
 # dark
 # light
 # user-can-set
-appearance: auto # Default value is auto
+appearance: dark # Default value is auto
 
 # Miscellaneous
 favicon: /images/favicon.png
 
 # Google Analytics
-ga_track_id:
-ga_domain:
+ga_track_id: G-70V7FL4EYE
+ga_domain: https://www.googletagmanager.com/gtag/js?id=G-70V7FL4EYE
 
 # Baidu Analytics
 ba_track_id:
