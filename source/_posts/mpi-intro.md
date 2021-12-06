@@ -9,10 +9,6 @@ categories:
   - 知识蒸馏
 ---
 
-
-
-# 利用MPI实现All-Reduce
-
 ## 实验介绍
 
 是次实验使用两种方法来进行 **In-place Allreduce**, 分别是 **基于主从结构的广播** 以及 **Ring-Allreduce**。
@@ -21,17 +17,17 @@ categories:
 
 这个方法比较自然，主要是以0号通信器作为Master节点，分别接受来自其他通信器的数据，并进行reduce操作。当所有节点的数据都被reduce之后，我们通过Master节点对所有节点进行广播，这样一来就完成了allreduce操作。
 
-对于每一个通信器，我们把数据分成 {% mathjax %}(BUFFERSIZE/comm\_size){% endmathjax %}​ 份，每一份分别传给Master节点，直到所有节点完成通讯。
+对于每一个通信器，我们把数据分成 {% mathjax %}(BUFFERSIZE/comm\_size){% endmathjax %} 份，每一份分别传给Master节点，直到所有节点完成通讯。
 
 ![微信截图_20211203004848.png](https://i.loli.net/2021/12/03/D5MXSWZoQ9acxgL.png)
 
 ### 分析
 
-设 {% mathjax %}α{% endmathjax %}​ 表示2个通信节点（指集合通信中的一个node，比如1个mpi process即可认为是一个通信节点）间的latency， {% mathjax %}S{% endmathjax %}​表示要allreduce的数据块大小，{% mathjax %}B{% endmathjax %}​表示2个通信节点间的带宽，{% mathjax %}C{% endmathjax %}​表示每字节数据的计算耗时。另外以{% mathjax %}N{% endmathjax %}​表示节点个数。这样的情况下，我们的通信只需要2步，一步reduce，一步broadcast。它们的通信耗时都是{% mathjax %}α + S / B{% endmathjax %}​​。
+设 {% mathjax %}α{% endmathjax %} 表示2个通信节点（指集合通信中的一个node，比如1个mpi process即可认为是一个通信节点）间的latency， {% mathjax %}S{% endmathjax %}表示要allreduce的数据块大小，{% mathjax %}B{% endmathjax %}表示2个通信节点间的带宽，{% mathjax %}C{% endmathjax %}表示每字节数据的计算耗时。另外以{% mathjax %}N{% endmathjax %}表示节点个数。这样的情况下，我们的通信只需要2步，一步reduce，一步broadcast。它们的通信耗时都是{% mathjax %}α + S / B{% endmathjax %}。
 
 所以，在Master节点上的计算耗时是{% mathjax %}N*S*C{% endmathjax %}
 
-总体耗时是{% mathjax %}2*(α + S/B) + N*S*C{% endmathjax %}​​。
+总体耗时是{% mathjax %}2*(α + S/B) + N*S*C{% endmathjax %}
 
 该算法最大的缺点就是Master 节点的带宽会成为瓶颈。
 
@@ -61,21 +57,21 @@ node_i = \{a_i,b_i,c_i,d_i\} \ for\ i \in[0,3]
 
 ### 第N-1次通信
 
-![image-20211204024605244](C:\Users\A\AppData\Roaming\Typora\typora-user-images\image-20211204024605244.png)
+![1.png](https://s2.loli.net/2021/12/07/sqyI9RXiSUVBCwQ.png)
 
 这时候我们需要再进行N-1次通信将reduce后的块发送给其他通信器。
 
-![image-20211204024712356](C:\Users\A\AppData\Roaming\Typora\typora-user-images\image-20211204024712356.png)
+![2.png](https://s2.loli.net/2021/12/07/M23VvzJUO7xNmki.png)
 
 ## 分析
 
 我们的通信是并发的，所有通信通道都被同时利用，没有冗余开销。
 
-第一阶段可以称为 **Scatter Reduce**，每一步的通信耗时是{% mathjax %}α+S/(NB){% mathjax %}​，计算耗时是{% mathjax %}(S/N)*C{% endmathjax %}
+第一阶段可以称为 **Scatter Reduce**，每一步的通信耗时是 {% mathjax %}α+S/(NB){% endmathjax %}，计算耗时是 {% mathjax %}(S/N)*C{% endmathjax %}
 
-第二阶段每一步的通信耗时也是{% mathjax %}α+S/(NB){% endmathjax %}，没有计算。这一阶段也可视为 **allgather**。
+第二阶段每一步的通信耗时也是 {% mathjax %}α+S/(NB){% endmathjax %}，没有计算。这一阶段也可视为 **allgather**。
 
-整体耗时大概是{% mathjax %}2*(N-1)*[α+S/(NB)] + (N-1)*[(S/N)*C]{% endmathjax %}​
+整体耗时大概是 {% mathjax %}2*(N-1)*[α+S/(NB)] + (N-1)*[(S/N)*C]{% endmathjax %}
 
 ## 实验结果
 
