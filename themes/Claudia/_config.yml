@@ -53,7 +53,7 @@ appearance: dark # Default value is auto
 favicon: /images/favicon.png
 
 # Google Analytics
-ga_track_id: G-70V7FL4EYE
+ga_track_id: 285224225
 ga_domain: https://www.googletagmanager.com/gtag/js?id=G-70V7FL4EYE
 
 # Baidu Analytics
